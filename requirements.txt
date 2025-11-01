@@ -8,3 +8,5 @@ scipy
 nbformat
 nbclient
 nbconvert
+jupyter
+notebook
