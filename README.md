@@ -49,10 +49,16 @@ Dữ liệu kính gồm 214 mẫu với 10 thuộc tính:
 
 ## Web demo (Streamlit)
 
-Chạy ứng dụng web để demo trực tiếp trên trình duyệt với thông tin dataset, mô tả đề bài và chạy được các bước phân tích, trực quan, phân loại, gom cụm.
+### Live Demo (Streamlit Cloud)
+
+Truy cập trực tiếp: **[https://data-mining-fvbrceyfcj8zqjdygdkpmt.streamlit.app/](https://data-mining-fvbrceyfcj8zqjdygdkpmt.streamlit.app/)**
+
+### Chạy locally
+
+Để chạy ứng dụng web trên máy của bạn:
 
 ```bash
-streamlit run streamlit_app.py
+streamlit run app/index.py
 ```
 
 Sau khi chạy, mở đường dẫn mà Streamlit in ra (thường là http://localhost:8501).
