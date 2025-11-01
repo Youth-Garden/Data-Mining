@@ -99,29 +99,28 @@ with col_b:
 
 st.markdown("---")
 
-with st.expander("📓 **Kết quả từ Notebook (tự động chạy)**", expanded=True):
+with st.expander("**Kết quả từ Notebook**", expanded=True):
     kernel = "python3"  # kernel mặc định thường là "python3"; có thể đổi nếu khác
     
     try:
-        with st.spinner("⏳ Chạy notebook... (lần đầu có thể hơi lâu)"):
+        with st.spinner("Chạy notebook..."):
             out_nb = run_notebook("main.ipynb", "outputs/main_executed.ipynb", kernel_name=kernel)
             try:
                 html_preview = notebook_to_html(out_nb)
             except Exception:
                 html_preview = None
-        st.success("✅ Notebook đã chạy xong.")
+        st.success("Notebook đã chạy xong.")
         # Nút tải notebook đã chạy
-        with open(out_nb, "rb") as fnb:
-            st.download_button("📥 Tải notebook đã chạy (ipynb)", fnb, file_name="main_executed.ipynb", mime="application/x-ipynb+json")
+    
         # Xem trước HTML trong expander (nếu convert thành công)
         if html_preview:
             with st.expander("👀 Xem trước chi tiết notebook (HTML)", expanded=False):
                 st.components.v1.html(html_preview, height=700, scrolling=True)
     except Exception as e:
-        st.error(f"❌ Lỗi khi chạy notebook: {e}\nVui lòng cài đặt: pip install nbformat nbclient nbconvert")
+        st.error(f"Lỗi khi chạy notebook: {e}\nVui lòng cài đặt: pip install nbformat nbclient nbconvert")
 
 # Manual re-run button
-if st.button("▶️ Chạy main.ipynb lại (thủ công)", key="manual_nb_run"):
+if st.button("▶hạy main.ipynb lại (thủ công)", key="manual_nb_run"):
     try:
         with st.spinner("Đang chạy notebook... (lần đầu có thể hơi lâu)"):
             out_nb = run_notebook("main.ipynb", "outputs/main_executed.ipynb", kernel_name=kernel)
@@ -129,16 +128,14 @@ if st.button("▶️ Chạy main.ipynb lại (thủ công)", key="manual_nb_run"
                 html_preview = notebook_to_html(out_nb)
             except Exception:
                 html_preview = None
-        st.success("✅ Notebook đã chạy xong.")
-        # Nút tải notebook đã chạy
-        with open(out_nb, "rb") as fnb:
-            st.download_button("📥 Tải notebook đã chạy (ipynb)", fnb, file_name="main_executed.ipynb", mime="application/x-ipynb+json")
+        st.success("Notebook đã chạy xong.")
+    
         # Xem trước HTML trong expander (nếu convert thành công)
         if html_preview:
             with st.expander("👀 Xem trước chi tiết notebook (HTML)", expanded=False):
                 st.components.v1.html(html_preview, height=700, scrolling=True)
     except Exception as e:
-        st.error(f"❌ Lỗi khi chạy notebook: {e}\nVui lòng cài đặt: pip install nbformat nbclient nbconvert")
+        st.error(f"Lỗi khi chạy notebook: {e}\nVui lòng cài đặt: pip install nbformat nbclient nbconvert")
 
 st.markdown('<div id="khao-sat-du-lieu" class="anchor"></div>', unsafe_allow_html=True)
 st.header("1) Khảo sát dữ liệu")
