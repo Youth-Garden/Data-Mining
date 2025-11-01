@@ -1,8 +1,6 @@
 # Data Mining - Glass Classification & Clustering
 
-![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=flat-square&logo=python&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Complete-00C853?style=flat-square)
-![Focus](https://img.shields.io/badge/Focus-Machine_Learning_|_Data_Analysis_|_Clustering-5E4AE3?style=flat-square)
+![Python](https://img.shields.io/badge/Python-3+-3776AB?style=flat-square&logo=python&logoColor=white)
 ![Libraries](https://img.shields.io/badge/Libraries-scikit--learn_|_pandas_|_numpy-F7931E?style=flat-square)
 ![License](https://img.shields.io/badge/License-Educational-lightgrey?style=flat-square)
 
