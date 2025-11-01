@@ -57,46 +57,108 @@ def notebook_to_html(notebook_path: str) -> str:
     return body
 
 
-def notebook_to_pdf(notebook_path: str, output_pdf_path: str) -> str:
+def notebook_to_pdf(notebook_path: str) -> bytes:
     """
-    Convert an executed notebook to PDF.
+    Convert an executed notebook to PDF using ReportLab.
     
     Args:
         notebook_path: Path to the executed notebook (.ipynb)
-        output_pdf_path: Path where PDF will be saved
         
     Returns:
-        str: Path to the generated PDF file
+        bytes: PDF file content as bytes
         
     Note:
-        Requires: pip install nbconvert[webpdf]
-        Also needs playwright: python -m playwright install chromium
+        Requires: pip install reportlab nbformat
     """
     import nbformat
-    from nbconvert import PDFExporter, WebPDFExporter
+    from io import BytesIO
+    from reportlab.lib.pagesizes import letter, A4
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import inch
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Preformatted, PageBreak
+    from reportlab.lib.enums import TA_LEFT, TA_CENTER
     
-    os.makedirs(os.path.dirname(output_pdf_path), exist_ok=True)
-    
+    # Read notebook
     nb = nbformat.read(notebook_path, as_version=4)
     
-    try:
-        # Try WebPDF first (better formatting, no LaTeX required)
-        pdf_exporter = WebPDFExporter()
-        pdf_exporter.exclude_input = False
-        (body, _resources) = pdf_exporter.from_notebook_node(nb)
-    except Exception as e:
-        # Fallback to standard PDF if WebPDF fails
-        try:
-            pdf_exporter = PDFExporter()
-            pdf_exporter.exclude_input = False
-            (body, _resources) = pdf_exporter.from_notebook_node(nb)
-        except Exception as e2:
-            raise Exception(
-                f"PDF export failed. WebPDF error: {e}. Standard PDF error: {e2}. "
-                "Install dependencies: pip install nbconvert[webpdf] && python -m playwright install chromium"
-            )
+    # Create PDF in memory
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, 
+                           rightMargin=72, leftMargin=72,
+                           topMargin=72, bottomMargin=18)
     
-    with open(output_pdf_path, 'wb') as f:
-        f.write(body)
+    # Container for the 'Flowable' objects
+    elements = []
     
-    return output_pdf_path
+    # Define styles
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=24,
+        textColor='#1f1f1f',
+        spaceAfter=30,
+        alignment=TA_CENTER
+    )
+    heading_style = ParagraphStyle(
+        'CustomHeading',
+        parent=styles['Heading2'],
+        fontSize=14,
+        textColor='#1f1f1f',
+        spaceAfter=12,
+        spaceBefore=12
+    )
+    code_style = ParagraphStyle(
+        'CustomCode',
+        parent=styles['Code'],
+        fontSize=9,
+        leftIndent=20,
+        rightIndent=20,
+        spaceAfter=12
+    )
+    
+    # Add title
+    elements.append(Paragraph("Glass Data Mining - Notebook Results", title_style))
+    elements.append(Spacer(1, 0.3*inch))
+    
+    # Process each cell
+    for i, cell in enumerate(nb.cells):
+        cell_type = cell.cell_type
+        
+        if cell_type == 'markdown':
+            # Add markdown as paragraph
+            text = cell.source.replace('\n', '<br/>')
+            elements.append(Paragraph(text, styles['Normal']))
+            elements.append(Spacer(1, 0.2*inch))
+            
+        elif cell_type == 'code':
+            # Add code cell header
+            elements.append(Paragraph(f"Cell [{i+1}] (Code):", heading_style))
+            
+            # Add code
+            code_text = cell.source
+            elements.append(Preformatted(code_text, code_style))
+            
+            # Add outputs if any
+            if hasattr(cell, 'outputs') and cell.outputs:
+                elements.append(Paragraph("Output:", styles['Italic']))
+                for output in cell.outputs:
+                    if output.output_type == 'stream':
+                        output_text = output.text
+                        elements.append(Preformatted(output_text, code_style))
+                    elif output.output_type == 'execute_result' or output.output_type == 'display_data':
+                        if 'text/plain' in output.data:
+                            output_text = output.data['text/plain']
+                            elements.append(Preformatted(output_text, code_style))
+                    elif output.output_type == 'error':
+                        error_text = '\n'.join(output.traceback)
+                        elements.append(Preformatted(error_text, code_style))
+            
+            elements.append(Spacer(1, 0.3*inch))
+    
+    # Build PDF
+    doc.build(elements)
+    
+    # Get PDF bytes
+    buffer.seek(0)
+    return buffer.getvalue()

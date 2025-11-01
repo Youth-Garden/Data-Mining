@@ -11,3 +11,4 @@ nbconvert[webpdf]
 jupyter
 notebook
 playwright
+reportlab
