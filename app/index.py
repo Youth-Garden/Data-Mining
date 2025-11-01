@@ -37,14 +37,14 @@ st.markdown(
 
 # === Sidebar ===
 st.sidebar.title("Glass Data Mining Demo")
-st.sidebar.markdown("### Điều hướng")
+st.sidebar.markdown("### Mục lục")
 st.sidebar.markdown(
     """
     - [Giới thiệu](#gioi-thieu)
-    - [1) Khảo sát dữ liệu](#khao-sat-du-lieu)
-    - [2) Trực quan hóa](#truc-quan-hoa)
-    - [3) Phân loại](#phan-loai)
-    - [4) Gom cụm](#gom-cum)
+    - [1. Khảo sát dữ liệu](#khao-sat-du-lieu)
+    - [2. Trực quan hóa](#truc-quan-hoa)
+    - [3. Phân loại](#phan-loai)
+    - [4. Gom cụm](#gom-cum)
     """
 )
 st.sidebar.markdown("---")
@@ -84,10 +84,10 @@ with c3:
 st.subheader("Đề bài")
 st.markdown(
     """
-    1) Khảo sát và xử lý dữ liệu: kích thước, kiểu dữ liệu, phân bố nhãn, thống kê.
-    2) Trực quan hóa: giảm chiều (PCA, t-SNE) và biểu diễn phân bố.
-    3) Phân loại: so sánh KNN, Random Forest, SVM bằng 10-fold CV (F1 Macro).
-    4) Gom cụm: K-Means và DBSCAN, đánh giá bằng F1 Macro, ARI, NMI.
+    1. Khảo sát và xử lý dữ liệu: kích thước, kiểu dữ liệu, phân bố nhãn, thống kê.
+    2. Trực quan hóa: giảm chiều (PCA, t-SNE) và biểu diễn phân bố.
+    3. Phân loại: so sánh KNN, Random Forest, SVM bằng 10-fold CV (F1 Macro).
+    4. Gom cụm: K-Means và DBSCAN, đánh giá bằng F1 Macro, ARI, NMI.
     """
 )
 
@@ -127,7 +127,7 @@ with st.expander("Kết quả từ Notebook", expanded=False):
         st.info("Nhấn nút 'Chạy Notebook' để thực thi")
 
 st.markdown('<div id="khao-sat-du-lieu" class="anchor"></div>', unsafe_allow_html=True)
-st.header("1) Khảo sát dữ liệu")
+st.header("1. Khảo sát dữ liệu")
 
 # Bảng dữ liệu
 st.subheader("Bảng dữ liệu")
@@ -140,14 +140,14 @@ with col1:
     st.subheader("Thông tin chung")
     info_data = pd.DataFrame({
         'Thuộc tính': ['Số mẫu', 'Số thuộc tính', 'Số lớp (Type)'],
-        'Giá trị': [df.shape[0], df.shape[1], int(df["Type"].nunique())]
+        'Giá trị': [int(df.shape[0]), int(df.shape[1]), int(df["Type"].nunique())]
     })
     st.dataframe(info_data, use_container_width=True, hide_index=True, height=150)
     
     st.subheader("**Kiểu dữ liệu**")
     dtype_data = pd.DataFrame({
-        'Cột': df.dtypes.index,
-        'Kiểu': df.dtypes.values.astype(str)
+        'Cột': df.dtypes.index.tolist(),
+        'Kiểu': [str(dt) for dt in df.dtypes.values]
     })
     st.dataframe(dtype_data, use_container_width=True, hide_index=True, height=300)
 
@@ -160,7 +160,7 @@ with col2:
     st.dataframe(df.describe().T[['mean', 'std', 'min', 'max']], use_container_width=True, height=300)
 
 st.markdown('<div id="truc-quan-hoa" class="anchor"></div>', unsafe_allow_html=True)
-st.header("2) Trực quan hóa")
+st.header("2. Trực quan hóa")
 
 label_palette = sns.color_palette("Set2", n_colors=int(df["Type"].nunique()))
 
@@ -221,7 +221,7 @@ with col2:
     st.pyplot(fig)
 
 st.markdown('<div id="phan-loai" class="anchor"></div>', unsafe_allow_html=True)
-st.header("3) Phân loại (Classification)")
+st.header("3. Phân loại (Classification)")
 
 col_cf1, col_cf2 = st.columns([4, 1])
 with col_cf1:
@@ -245,10 +245,9 @@ if 'classification_results' in st.session_state:
     st.success("Phân loại hoàn thành")
     st.subheader("Kết quả")
     st.dataframe(st.session_state['classification_results'], width="stretch")
-    st.download_button("Tải kết quả (CSV)", st.session_state['classification_results'].to_csv(index=False), file_name="classification_results.csv", mime="text/csv")
 
 st.markdown('<div id="gom-cum" class="anchor"></div>', unsafe_allow_html=True)
-st.header("4) Gom cụm (Clustering)")
+st.header("4. Gom cụm (Clustering)")
 
 col_cluster1, col_cluster2 = st.columns(2)
 
