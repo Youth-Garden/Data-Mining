@@ -6,6 +6,7 @@ def run_notebook(input_path: str = "main.ipynb", output_path: str = "outputs/mai
     """Execute a Jupyter notebook in-place and save the executed copy.
 
     Returns the output notebook path. Does not modify the original notebook file.
+    kernel_name: If None, will try to auto-detect from notebook metadata or use system default.
     """
     import nbformat
     from nbclient import NotebookClient
@@ -24,8 +25,22 @@ def run_notebook(input_path: str = "main.ipynb", output_path: str = "outputs/mai
         "warnings.filterwarnings('ignore', message='.*FigureCanvasAgg is non-interactive.*')\n"
     )
     nb.cells.insert(0, new_code_cell(source=prelude))
-    client = NotebookClient(nb, timeout=timeout, kernel_name=kernel_name)
-    client.execute()
+    
+    # Auto-detect kernel name from notebook metadata if not provided
+    if kernel_name is None:
+        kernel_name = nb.metadata.get('kernelspec', {}).get('name', None)
+    
+    try:
+        client = NotebookClient(nb, timeout=timeout, kernel_name=kernel_name)
+        client.execute()
+    except Exception as e:
+        # If specific kernel fails, try without specifying kernel_name (system default)
+        if kernel_name is not None and "No such kernel" in str(e):
+            client = NotebookClient(nb, timeout=timeout, kernel_name=None)
+            client.execute()
+        else:
+            raise
+    
     nbformat.write(nb, output_path)
     return output_path
 
