@@ -47,7 +47,7 @@ Dữ liệu kính gồm 214 mẫu với 10 thuộc tính:
 - **Fe**: Iron
 - **Type**: Loại kính (1, 2, 3, 5, 6, 7)
 
-## 🌐 Web demo (Streamlit)
+## Web demo (Streamlit)
 
 ### Live Demo (Streamlit Cloud)
 
@@ -62,14 +62,6 @@ streamlit run app/index.py
 ```
 
 Sau khi chạy, mở đường dẫn mà Streamlit in ra (thường là http://localhost:8501).
-
-### Tính năng Web
-
-- 📊 Khảo sát dữ liệu: Bảng dữ liệu, thống kê, phân bố nhãn
-- 📈 Trực quan hóa: PCA, t-SNE, phân bố các thuộc tính
-- 🤖 Phân loại: GridSearchCV với KNN, Random Forest, SVM
-- 🎯 Gom cụm: K-Means, DBSCAN với đánh giá chi tiết
-- 📓 Notebook viewer: Xem kết quả từ main.ipynb (chạy tự động)
 
 ## Cài đặt
 
