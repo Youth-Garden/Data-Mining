@@ -47,6 +47,16 @@ Dữ liệu kính gồm 214 mẫu với 10 thuộc tính:
 - **Fe**: Iron
 - **Type**: Loại kính (1, 2, 3, 5, 6, 7)
 
+## Web demo (Streamlit)
+
+Chạy ứng dụng web để demo trực tiếp trên trình duyệt với thông tin dataset, mô tả đề bài và chạy được các bước phân tích, trực quan, phân loại, gom cụm.
+
+```bash
+streamlit run streamlit_app.py
+```
+
+Sau khi chạy, mở đường dẫn mà Streamlit in ra (thường là http://localhost:8501).
+
 ## Cài đặt
 
 ### 1. Clone repository
