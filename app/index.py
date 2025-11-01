@@ -100,11 +100,10 @@ with col_b:
 st.markdown("---")
 
 with st.expander("**Kết quả từ Notebook**", expanded=True):
-    kernel = "python3"  # kernel mặc định thường là "python3"; có thể đổi nếu khác
-    
     try:
         with st.spinner("Chạy notebook..."):
-            out_nb = run_notebook("main.ipynb", "outputs/main_executed.ipynb", kernel_name=kernel)
+            # kernel_name=None will auto-detect from notebook metadata or use system default
+            out_nb = run_notebook("main.ipynb", "outputs/main_executed.ipynb", kernel_name=None)
             try:
                 html_preview = notebook_to_html(out_nb)
             except Exception:
@@ -120,10 +119,10 @@ with st.expander("**Kết quả từ Notebook**", expanded=True):
         st.error(f"Lỗi khi chạy notebook: {e}\nVui lòng cài đặt: pip install nbformat nbclient nbconvert")
 
 # Manual re-run button
-if st.button("▶hạy main.ipynb lại (thủ công)", key="manual_nb_run"):
+if st.button("▶ Chạy main.ipynb lại (thủ công)", key="manual_nb_run"):
     try:
         with st.spinner("Đang chạy notebook... (lần đầu có thể hơi lâu)"):
-            out_nb = run_notebook("main.ipynb", "outputs/main_executed.ipynb", kernel_name=kernel)
+            out_nb = run_notebook("main.ipynb", "outputs/main_executed.ipynb", kernel_name=None)
             try:
                 html_preview = notebook_to_html(out_nb)
             except Exception:
