@@ -43,18 +43,6 @@ def load_css(file_name: str) -> None:
 
 load_css("style.css")
 
-def ensure_chromium_installed():
-    """Ensure Playwright's Chromium is installed before using nbconvert[webpdf]."""
-    try:
-        from playwright._impl._driver import compute_driver_executable
-        compute_driver_executable()
-    except Exception:
-        print("Installing Chromium for Playwright...")
-        subprocess.run(["python", "-m", "playwright", "install", "chromium", "--with-deps"], check=True)
-
-ensure_chromium_installed()
-
-
 # === Caching (Lưu đệm) cho các hàm tốn tài nguyên ===
 
 @st.cache_data
@@ -211,7 +199,7 @@ def display_introduction(df: pd.DataFrame) -> None:
         # Nút chạy notebook
         if st.button("Chạy Notebook", key="run_notebook"):
             try:
-                with st.spinner("Đang chạy notebook..."):
+                with st.spinner("Đang chạy notebook và tạo file xuất..."):
                     out_nb = run_notebook(
                         "main.ipynb",
                         "outputs/main_executed.ipynb",
@@ -224,29 +212,29 @@ def display_introduction(df: pd.DataFrame) -> None:
                     except Exception:
                         html_preview = None
 
-                    # Tạo PDF
-                    pdf_path = None
+                    # Tạo PDF trực tiếp thành bytes
+                    pdf_bytes = None
                     try:
                         from features.notebook_runner import notebook_to_pdf
-                        pdf_path = notebook_to_pdf(out_nb, "outputs/main_executed.pdf")
+                        pdf_bytes = notebook_to_pdf(out_nb)
                     except Exception as e:
                         st.warning(f"Không thể tạo PDF: {e}")
 
                     # Lưu vào session_state
                     st.session_state.executed_notebook = out_nb
-                    st.session_state.pdf_path = pdf_path
+                    st.session_state.pdf_bytes = pdf_bytes
                     st.session_state.html_preview = html_preview
                     st.session_state.notebook_ran = True
 
 
             except Exception as e:
-                st.error(f"Lỗi khi chạy notebook: {e}\nCài đặt: pip install nbformat nbclient nbconvert")
+                st.error(f"Lỗi khi chạy notebook: {e}\nCài đặt: pip install nbformat nbclient nbconvert reportlab")
 
         # --- Hiển thị kết quả nếu đã chạy ---
-        if st.session_state.notebook_ran:
-            out_nb = st.session_state.executed_notebook
-            pdf_path = st.session_state.pdf_path
-            html_preview = st.session_state.html_preview
+        if st.session_state.get('notebook_ran', False):
+            out_nb = st.session_state.get('executed_notebook')
+            pdf_bytes = st.session_state.get('pdf_bytes')
+            html_preview = st.session_state.get('html_preview')
 
             st.success("Notebook đã chạy xong")
 
@@ -262,15 +250,14 @@ def display_introduction(df: pd.DataFrame) -> None:
                             use_container_width=True,
                         )
             with col_dl2:
-                if pdf_path and os.path.exists(pdf_path):
-                    with open(pdf_path, "rb") as f:
-                        st.download_button(
-                            "Tải PDF",
-                            f,
-                            file_name="main_executed.pdf",
-                            mime="application/pdf",
-                            use_container_width=True,
-                        )
+                if pdf_bytes:
+                    st.download_button(
+                        "Tải PDF",
+                        pdf_bytes,
+                        file_name="main_executed.pdf",
+                        mime="application/pdf",
+                        use_container_width=True,
+                    )
                 else:
                     st.info("PDF không khả dụng")
 
