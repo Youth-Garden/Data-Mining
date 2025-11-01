@@ -55,3 +55,48 @@ def notebook_to_html(notebook_path: str) -> str:
     html_exporter.exclude_input = False
     (body, _resources) = html_exporter.from_notebook_node(nb)
     return body
+
+
+def notebook_to_pdf(notebook_path: str, output_pdf_path: str) -> str:
+    """
+    Convert an executed notebook to PDF.
+    
+    Args:
+        notebook_path: Path to the executed notebook (.ipynb)
+        output_pdf_path: Path where PDF will be saved
+        
+    Returns:
+        str: Path to the generated PDF file
+        
+    Note:
+        Requires: pip install nbconvert[webpdf]
+        Also needs playwright: python -m playwright install chromium
+    """
+    import nbformat
+    from nbconvert import PDFExporter, WebPDFExporter
+    
+    os.makedirs(os.path.dirname(output_pdf_path), exist_ok=True)
+    
+    nb = nbformat.read(notebook_path, as_version=4)
+    
+    try:
+        # Try WebPDF first (better formatting, no LaTeX required)
+        pdf_exporter = WebPDFExporter()
+        pdf_exporter.exclude_input = False
+        (body, _resources) = pdf_exporter.from_notebook_node(nb)
+    except Exception as e:
+        # Fallback to standard PDF if WebPDF fails
+        try:
+            pdf_exporter = PDFExporter()
+            pdf_exporter.exclude_input = False
+            (body, _resources) = pdf_exporter.from_notebook_node(nb)
+        except Exception as e2:
+            raise Exception(
+                f"PDF export failed. WebPDF error: {e}. Standard PDF error: {e2}. "
+                "Install dependencies: pip install nbconvert[webpdf] && python -m playwright install chromium"
+            )
+    
+    with open(output_pdf_path, 'wb') as f:
+        f.write(body)
+    
+    return output_pdf_path
