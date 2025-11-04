@@ -199,7 +199,7 @@ def display_introduction(df: pd.DataFrame) -> None:
         # Nút chạy notebook
         if st.button("Chạy Notebook", key="run_notebook"):
             try:
-                with st.spinner("Đang chạy notebook và tạo file xuất..."):
+                with st.spinner("Đang chạy notebook..."):
                     out_nb = run_notebook(
                         "main.ipynb",
                         "outputs/main_executed.ipynb",
@@ -212,54 +212,32 @@ def display_introduction(df: pd.DataFrame) -> None:
                     except Exception:
                         html_preview = None
 
-                    # Tạo PDF trực tiếp thành bytes
-                    pdf_bytes = None
-                    # try:
-                    #     from features.notebook_runner import notebook_to_pdf
-                    #     pdf_bytes = notebook_to_pdf(out_nb)
-                    # except Exception as e:
-                    #     st.warning(f"Không thể tạo PDF: {e}")
-
                     # Lưu vào session_state
                     st.session_state.executed_notebook = out_nb
-                    st.session_state.pdf_bytes = pdf_bytes
                     st.session_state.html_preview = html_preview
                     st.session_state.notebook_ran = True
 
 
             except Exception as e:
-                st.error(f"Lỗi khi chạy notebook: {e}\nCài đặt: pip install nbformat nbclient nbconvert reportlab")
+                st.error(f"Lỗi khi chạy notebook: {e}\nCài đặt: pip install nbformat nbclient nbconvert")
 
         # --- Hiển thị kết quả nếu đã chạy ---
         if st.session_state.get('notebook_ran', False):
             out_nb = st.session_state.get('executed_notebook')
-            pdf_bytes = st.session_state.get('pdf_bytes')
             html_preview = st.session_state.get('html_preview')
 
             st.success("Notebook đã chạy xong")
 
-            col_dl1, col_dl2 = st.columns(2)
-            # with col_dl1:
-            #     if out_nb and os.path.exists(out_nb):
-            #         with open(out_nb, "rb") as f:
-            #             st.download_button(
-            #                 "Tải Notebook",
-            #                 f,
-            #                 file_name="main_executed.ipynb",
-            #                 mime="application/x-ipynb+json",
-            #                 use_container_width=True,
-            #             )
-            with col_dl2:
-                if pdf_bytes:
+            # Download button cho notebook
+            if out_nb and os.path.exists(out_nb):
+                with open(out_nb, "rb") as f:
                     st.download_button(
-                        "Tải PDF",
-                        pdf_bytes,
-                        file_name="main_executed.pdf",
-                        mime="application/pdf",
+                        "Tải Notebook",
+                        f,
+                        file_name="main_executed.ipynb",
+                        mime="application/x-ipynb+json",
                         use_container_width=True,
                     )
-                # else:
-                #     st.info("PDF không khả dụng")
 
             if html_preview:
                 with st.expander("Xem trước chi tiết notebook (HTML)", expanded=False):

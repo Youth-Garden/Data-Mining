@@ -7,8 +7,6 @@ scikit-learn
 scipy
 nbformat
 nbclient
-nbconvert[webpdf]
+nbconvert
 jupyter
 notebook
-playwright
-reportlab
