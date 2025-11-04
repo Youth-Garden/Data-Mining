@@ -23,7 +23,7 @@ from features.notebook_runner import run_notebook, notebook_to_html
 st.set_page_config(
     page_title="Glass Data Mining Demo", 
     layout="wide",
-    page_icon="📊" # Thêm icon chuyên nghiệp
+    page_icon="🔍" # Thêm icon chuyên nghiệp
 )
 sns.set_style("whitegrid")
 
@@ -214,11 +214,11 @@ def display_introduction(df: pd.DataFrame) -> None:
 
                     # Tạo PDF trực tiếp thành bytes
                     pdf_bytes = None
-                    try:
-                        from features.notebook_runner import notebook_to_pdf
-                        pdf_bytes = notebook_to_pdf(out_nb)
-                    except Exception as e:
-                        st.warning(f"Không thể tạo PDF: {e}")
+                    # try:
+                    #     from features.notebook_runner import notebook_to_pdf
+                    #     pdf_bytes = notebook_to_pdf(out_nb)
+                    # except Exception as e:
+                    #     st.warning(f"Không thể tạo PDF: {e}")
 
                     # Lưu vào session_state
                     st.session_state.executed_notebook = out_nb
@@ -239,16 +239,16 @@ def display_introduction(df: pd.DataFrame) -> None:
             st.success("Notebook đã chạy xong")
 
             col_dl1, col_dl2 = st.columns(2)
-            with col_dl1:
-                if out_nb and os.path.exists(out_nb):
-                    with open(out_nb, "rb") as f:
-                        st.download_button(
-                            "Tải Notebook",
-                            f,
-                            file_name="main_executed.ipynb",
-                            mime="application/x-ipynb+json",
-                            use_container_width=True,
-                        )
+            # with col_dl1:
+            #     if out_nb and os.path.exists(out_nb):
+            #         with open(out_nb, "rb") as f:
+            #             st.download_button(
+            #                 "Tải Notebook",
+            #                 f,
+            #                 file_name="main_executed.ipynb",
+            #                 mime="application/x-ipynb+json",
+            #                 use_container_width=True,
+            #             )
             with col_dl2:
                 if pdf_bytes:
                     st.download_button(
@@ -258,8 +258,8 @@ def display_introduction(df: pd.DataFrame) -> None:
                         mime="application/pdf",
                         use_container_width=True,
                     )
-                else:
-                    st.info("PDF không khả dụng")
+                # else:
+                #     st.info("PDF không khả dụng")
 
             if html_preview:
                 with st.expander("Xem trước chi tiết notebook (HTML)", expanded=False):
