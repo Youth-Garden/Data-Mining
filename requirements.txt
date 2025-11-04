@@ -10,3 +10,4 @@ nbclient
 nbconvert
 jupyter
 notebook
+tabulate
